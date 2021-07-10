@@ -1,0 +1,22 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+    "include": ["./**/*", ],
+    "exclude": ["../node_modules/*"],
+    "outDir": "out",
+    "sourceMap": true,
+    "target": "esnext",
+    "lib": [
+      "es5",
+      "dom",
+      "es2015.collection",
+      "ES2019",
+      "es2019.Array",
+      "ES2017",
+      "ES2018",
+      "ES2020",
+      "ESNext",
+      "ESNext.Promise",
+      "ES2020.Promise"
+    ],
+    "compilerOptions": {"strict": true,  "types": ["node", "svelte"]}
+  }
