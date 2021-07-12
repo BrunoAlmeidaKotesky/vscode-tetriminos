@@ -1,7 +1,8 @@
 <script lang="ts">
-    import {setContext} from 'svelte';
+    import {onMount, setContext} from 'svelte';
     import { COLS, ROWS, BLOCK_SIZE, TETRIS } from '../helpers/constants';
     import {pieceController} from '../controllers/PieceController';
+    import InputController from '../controllers/InputController';
     import board from '../stores/board';
     import currentPiece from '../stores/currentPiece';
     // components
@@ -11,24 +12,29 @@
     import Score from "./Score.svelte";
     import NextPiece from "./NextPiece.svelte";
     import Level from "./Level.svelte";
-    console.log('here');
-    const canvasWidth = COLS * BLOCK_SIZE
-    const canvasHeight = ROWS * BLOCK_SIZE
+
+    const canvasWidth = COLS * BLOCK_SIZE;
+    const canvasHeight = ROWS * BLOCK_SIZE;
     const tetriminos = pieceController.tetriminos;
+
     currentPiece.setCurrentPiece(tetriminos[1]);
     setContext(TETRIS, {currentPiece, board});
+    const inputController = new InputController();
+
+    onMount(() => {
+        inputController.init();
+        console.log('Iniciou');
+    });
 </script>
 
 <div class="game">
     <section class="stats">
         <Statistics />
     </section>
-
     <section>
         <Lines />
         <Board width={canvasWidth} height={canvasHeight}/>
     </section>
-
     <section class="meta">
         <!-- SCORE -->
         <Score />

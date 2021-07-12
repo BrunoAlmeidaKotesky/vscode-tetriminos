@@ -97,7 +97,6 @@ export class PieceController {
         const y = column * BLOCK_SIZE;
         const w = BLOCK_SIZE;
         const h = BLOCK_SIZE;
-        debugger;
         ctx.fillStyle = color;
         ctx.fillRect(x, y, w, h);
 
@@ -215,7 +214,12 @@ export class PieceController {
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
-
+    
+    public getRandomPiece() {
+        const length = this.tetriminos.length;
+        const idx = Math.floor(Math.random() * length);
+        return this.tetriminos[idx];
+    }
 }
 
 const pieceController = new PieceController();

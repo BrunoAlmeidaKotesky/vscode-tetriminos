@@ -18,5 +18,8 @@
       "ESNext.Promise",
       "ES2020.Promise"
     ],
-    "compilerOptions": {"strict": true,  "types": ["node", "svelte"]}
+    "compilerOptions": {
+      "strict": true,  "types": ["node", "svelte"],
+      "noImplicitAny": false
+    },
   }

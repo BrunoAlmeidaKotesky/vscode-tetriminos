@@ -21,7 +21,7 @@ export class Utils {
      * @param {Number} n - The number of times to invoke the iteratee public.
      * @param {public} [func = i => i] - The public invoked each iteration.
      */
-     static times(n: number, cb = (i: number) => i) {
+    static times(n: number, cb = (i: number) => i) {
         return Array.from({ length: n }).map((_, i) => cb(i));
     }
 
@@ -29,7 +29,7 @@ export class Utils {
      * Creates a public that returns value.
      * @param {*} value - The value to return from the new public.
      */
-     static constant<T>(value: T) {
+    static constant<T>(value: T) {
         return () => value;
     }
 
@@ -49,5 +49,40 @@ export class Utils {
      * @param {*} a
      * @param {*} b
      */
-     static lessThan = (a: number, b: number): boolean => a < b;
+    static lessThan = (a: number, b: number): boolean => a < b;
+    static getMatrixHeight = (matrix: number[][]) => matrix.length;
+    static getMatrixWidth = (matrix: number[][]) => matrix[0].length;
+    /**
+     * Combines two matrixes (a board and a piece) and returns the new matrix
+     * @param {Array} destinationMatrix The board matrix
+     * @param {Array} sourceMatrix The piece matrix
+     * @param {number} [offsetX=0] The x location of the piece
+     * @param {number} [offsetY=0] The y location of the piece
+     * @param {boolean} [overwrite=true] Whether to overwrite the board matrix
+     */
+    static combineMatrices(
+        destinationMatrix: number[][],
+        sourceMatrix: number[][],
+        offsetX = 0,
+        offsetY = 0,
+        overwrite = true
+    ) {
+        const lastXIndex = Utils.getMatrixWidth(sourceMatrix) + offsetX - 1;
+        const lastYIndex = Utils.getMatrixHeight(sourceMatrix) + offsetY - 1;
+
+        const newMatrix = destinationMatrix.map((rows, y) => {
+            return rows.map((value, x) => {
+                if (Utils.inRange(x, offsetX, lastXIndex + 1) && Utils.inRange(y, offsetY, lastYIndex + 1)) {
+                    if (overwrite || !value) {
+                        return sourceMatrix[y - offsetY][x - offsetX];
+                    }
+                }
+                return value;
+            });
+        });
+
+        return newMatrix;
+    }
+    
+
 }

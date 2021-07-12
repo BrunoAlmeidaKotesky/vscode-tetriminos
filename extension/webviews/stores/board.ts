@@ -1,16 +1,25 @@
 import {writable} from 'svelte/store';
-import {BoardController} from '../controllers/BoardController';
+import boardController, {BoardController} from '../controllers/BoardController';
+import type { IPieceInformation } from '../controllers/PieceController';
 import { COLS, ROWS } from '../helpers/constants';
+import { Utils } from '../helpers/Utils';
 
-const initialState = BoardController.getEmptyBoard(COLS, ROWS);
+const initialState = BoardController.createEmptyMatrix(COLS, ROWS);
 
 function createBoard(initialBoard: number[][]) {
   const { subscribe, set, update } = writable(initialBoard);
   return {
     subscribe,
     resetBoard() {
-      set(BoardController.getEmptyBoard(COLS, ROWS));
+      set(BoardController.createEmptyMatrix(COLS, ROWS));
     },
+    mergePiecesIntoBoard(piece: IPieceInformation) {
+      update(prevBoard => {
+        const { matrix: pieceMatrix, x, y } = piece;
+        const mergedBoard = Utils.combineMatrices(prevBoard, pieceMatrix, x, y, false);
+        return mergedBoard;
+      });
+    }
   };
 }
 

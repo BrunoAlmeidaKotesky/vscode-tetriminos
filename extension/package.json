@@ -82,6 +82,7 @@
     "webpack-cli": "^4.2.0"
   },
   "dependencies": {
+    "klona": "^2.0.4",
     "polka": "^0.5.2"
   }
 }

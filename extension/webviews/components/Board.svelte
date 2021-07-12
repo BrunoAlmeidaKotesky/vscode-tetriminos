@@ -11,14 +11,15 @@
     let ctx: CanvasRenderingContext2D | null;
 
     const { currentPiece, board } = getContext(TETRIS);
-
+    $: $currentPiece && drawCanvas();
     function drawCanvas() {
-        pieceController.drawGame(ctx!, $board, $currentPiece);
+        if(ctx) {
+            pieceController.drawGame(ctx!, $board, $currentPiece);
+        }
     }
 
     onMount(() => {
         ctx = canvas.getContext("2d");
-        drawCanvas();
     });
 </script>
 
