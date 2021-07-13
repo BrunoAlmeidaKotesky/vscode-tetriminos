@@ -1,25 +1,30 @@
-import { COLS, ROWS } from "../helpers/constants";
-import { Utils } from "../helpers/Utils";
+import { klona } from "klona";
+import { COLS, PLAYER_DOWN_RATE, PLAYER_SIDEWAYS_RATE, ROWS } from "../helpers/constants";
+import { utils } from "../helpers/Utils";
+import type { BoardStore } from "../stores/board";
 import type { IPieceInformation } from "./PieceController";
 
+
+export type MovementCalculationTupleReturn = [boolean, boolean, boolean];
+export type MovementCalculationTuple = [number, number, number];
 export class BoardController {
 
   static createEmptyMatrix(cols: number, rows: number) {
     // create a single column
     const column = BoardController.createEmptyArray(rows);
     // callback function to create the row
-    const createRow = Utils.partial(BoardController.createEmptyArray, cols);
+    const createRow = utils.partial(BoardController.createEmptyArray, cols);
     // for each column create a row and return matrix
     //@ts-ignore
     return column.map(createRow);
   }
-  
+
   /**
    * Creates an array with length "length" filled with "0"s
    *
    * @param {Number} length The length of the returned empty array
    */
-  static createEmptyArray = (length: number) => Utils.times(length, ()=>0);
+  static createEmptyArray = (length: number) => utils.times(length, utils.constant(0));
   /**
  * Detects collision between a piece and board
  * by checking if the piece is within the bounds of the board
@@ -29,7 +34,7 @@ export class BoardController {
  * @returns {Boolean} True if there is a collision, false if not
  */
   public detectMatrixCollision(piece: IPieceInformation, board: number[][]): boolean {
-    if(this.inBounds(piece, board))
+    if (this.inBounds(piece, board))
       return false;
     return true;
   }
@@ -82,6 +87,31 @@ export class BoardController {
    */
   public notOccupied(x: number, y: number, board: number[][]): boolean {
     return board[y] && board[y][x] === 0;
+  }
+
+  public calculateMovement(currentTime: number, [lastLeftMove, lastRightMove, lastDownMove]: MovementCalculationTuple): MovementCalculationTupleReturn {
+    const playerSidewaysThreshold = Math.ceil(1000 / PLAYER_SIDEWAYS_RATE);
+    const isLeftMovementAllowed =
+      currentTime - lastLeftMove > playerSidewaysThreshold;
+    const isRightMovementAllowed =
+      currentTime - lastRightMove > playerSidewaysThreshold;
+    const isDownMovementAllowed =
+      currentTime - lastDownMove > Math.ceil(1000 / PLAYER_DOWN_RATE);
+    return [
+      isLeftMovementAllowed,
+      isRightMovementAllowed,
+      isDownMovementAllowed,
+    ];
+  }
+
+  public mergeCurrentPieceIntoBoard(currentPiece: IPieceInformation, board: BoardStore) {
+    // First moves the piece up one space.
+    // This allows you to shift the piece around a bit and
+    // only detects collisions at the end of the step
+    // instead of at the beginning.
+    const previousPositionPiece = klona(currentPiece); //{...$currentPiece};
+    previousPositionPiece.y -= 1;
+    board.mergePiecesIntoBoard(previousPositionPiece);
   }
 }
 

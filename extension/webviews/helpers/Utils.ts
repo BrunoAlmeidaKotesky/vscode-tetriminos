@@ -8,7 +8,7 @@ export class Utils {
  * @param {Number} [start=0] - The start of the range.
  * @param {Number} end - The end of the range.
  */
-    static inRange(num: number, start = 0, end?: number): boolean {
+    private inRange(num: number, start = 0, end?: number): boolean {
         if (!end) {
             end = start;
             start = 0;
@@ -21,7 +21,7 @@ export class Utils {
      * @param {Number} n - The number of times to invoke the iteratee public.
      * @param {public} [func = i => i] - The public invoked each iteration.
      */
-    static times(n: number, cb = (i: number) => i) {
+    public times(n: number, cb = (i: number) => i) {
         return Array.from({ length: n }).map((_, i) => cb(i));
     }
 
@@ -29,7 +29,7 @@ export class Utils {
      * Creates a public that returns value.
      * @param {*} value - The value to return from the new public.
      */
-    static constant<T>(value: T) {
+    public constant<T>(value: T) {
         return () => value;
     }
 
@@ -38,7 +38,7 @@ export class Utils {
      * @param {public} func - The public to partially apply arguments to.
      * @param  {...any} boundArgs - The arguments to be partially applied.
      */
-    static partial<R extends Function, T>(func: R, ...boundArgs: T[]) {
+    public partial<R extends Function, T>(func: R, ...boundArgs: T[]) {
         return (...remainingArgs: T[]) => {
             return func(...boundArgs, ...remainingArgs) as T[];
         };
@@ -49,9 +49,9 @@ export class Utils {
      * @param {*} a
      * @param {*} b
      */
-    static lessThan = (a: number, b: number): boolean => a < b;
-    static getMatrixHeight = (matrix: number[][]) => matrix.length;
-    static getMatrixWidth = (matrix: number[][]) => matrix[0].length;
+    public lessThan = (a: number, b: number): boolean => a < b;
+    private getMatrixHeight = (matrix: number[][]) => matrix.length;
+    private getMatrixWidth = (matrix: number[][]) => matrix[0].length;
     /**
      * Combines two matrixes (a board and a piece) and returns the new matrix
      * @param {Array} destinationMatrix The board matrix
@@ -60,19 +60,19 @@ export class Utils {
      * @param {number} [offsetY=0] The y location of the piece
      * @param {boolean} [overwrite=true] Whether to overwrite the board matrix
      */
-    static combineMatrices(
+    public combineMatrices(
         destinationMatrix: number[][],
         sourceMatrix: number[][],
         offsetX = 0,
         offsetY = 0,
         overwrite = true
     ) {
-        const lastXIndex = Utils.getMatrixWidth(sourceMatrix) + offsetX - 1;
-        const lastYIndex = Utils.getMatrixHeight(sourceMatrix) + offsetY - 1;
+        const lastXIndex = this.getMatrixWidth(sourceMatrix) + offsetX - 1;
+        const lastYIndex = this.getMatrixHeight(sourceMatrix) + offsetY - 1;
 
         const newMatrix = destinationMatrix.map((rows, y) => {
             return rows.map((value, x) => {
-                if (Utils.inRange(x, offsetX, lastXIndex + 1) && Utils.inRange(y, offsetY, lastYIndex + 1)) {
+                if (this.inRange(x, offsetX, lastXIndex + 1) && this.inRange(y, offsetY, lastYIndex + 1)) {
                     if (overwrite || !value) {
                         return sourceMatrix[y - offsetY][x - offsetX];
                     }
@@ -83,6 +83,6 @@ export class Utils {
 
         return newMatrix;
     }
-    
-
 }
+
+export const utils = new Utils();
