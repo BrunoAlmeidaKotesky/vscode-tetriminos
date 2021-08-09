@@ -4,9 +4,9 @@ import { utils } from "../helpers/Utils";
 import type { BoardStore } from "../stores/board";
 import type { IPieceInformation } from "./PieceController";
 
-
-export type MovementCalculationTupleReturn = [boolean, boolean, boolean];
+export type MovementCalculationTupleReturn = [boolean, boolean, boolean, number];
 export type MovementCalculationTuple = [number, number, number];
+
 export class BoardController {
 
   static createEmptyMatrix(cols: number, rows: number) {
@@ -33,7 +33,10 @@ export class BoardController {
  * @param {Array} board The board matrix
  * @returns {Boolean} True if there is a collision, false if not
  */
-  public detectMatrixCollision(piece: IPieceInformation, board: number[][]): boolean {
+  public detectMatrixCollision( piece: IPieceInformation, board: number[][], xOffset: number = 0, yOffset: number = 0): boolean {
+    const tempPiece = klona(piece);
+    tempPiece.x += xOffset;
+    tempPiece.y += yOffset;
     if (this.inBounds(piece, board))
       return false;
     return true;
@@ -101,6 +104,7 @@ export class BoardController {
       isLeftMovementAllowed,
       isRightMovementAllowed,
       isDownMovementAllowed,
+      playerSidewaysThreshold
     ];
   }
 

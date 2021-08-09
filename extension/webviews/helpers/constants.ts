@@ -15,4 +15,6 @@ export enum KeyBoardController {
     UP = "up",
     ENTER = "enter",
     HOLD = "c",
+    ROTATE_RIGHT = "X",
+    ROTATE_LEFT = "Z"
 }

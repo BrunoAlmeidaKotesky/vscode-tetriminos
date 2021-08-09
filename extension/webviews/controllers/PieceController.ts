@@ -1,4 +1,5 @@
-import { BLOCK_SIZE } from "../helpers/constants";
+import { BLOCK_SIZE, COLS } from "../helpers/constants";
+import { utils } from "../helpers/Utils";
 
 export enum PieceColors {
     T = '#6B46C1',
@@ -16,12 +17,16 @@ export interface IPieceInformation {
     id: number;
     color: PieceColors;
     matrix: number[][];
-    x: 0,
-    y: 0,
+    x: number;
+    y: number;
+    rotation: number;
 }
+
+//Create a function to rotate a tetris piece
 
 export class PieceController {
     private id: number = 0;
+    private rotationIndex: number = 0;
     public tetriminos: IPieceInformation[] = [];
     constructor() {
         this.tetriminos = this.getTetriminos();
@@ -76,6 +81,7 @@ export class PieceController {
             matrix,
             x: 0,
             y: 0,
+            rotation: 0
         };
     }
 
@@ -220,7 +226,29 @@ export class PieceController {
         const idx = Math.floor(Math.random() * length);
         return this.tetriminos[idx];
     }
+    
+    /**
+     * Positions a piece in the center of the board.
+     * @returns a copy of the input piece
+     */
+    public centerPiece(piece: IPieceInformation): IPieceInformation {
+        piece.x = Math.floor((COLS - piece.matrix[0].length) / 2);
+        piece.y = piece.name === 'I' ? -1 : 0;
+        return piece;
+    }
+
+    public rotatePiece(clockwise: boolean, shouldRotate: boolean, tiles: number[]) { 
+        const oldRotationindex = this.rotationIndex;
+        this.rotationIndex += clockwise ? 1 : -1;
+        this.rotationIndex = utils.moduleOf(this.rotationIndex, 4);
+        for(let i = 0; i < tiles.length; i++) {
+            tiles[i]
+        }
+    }
+
 }
 
 const pieceController = new PieceController();
 export { pieceController };
+
+//Create a discord bot from scratch using typescript

@@ -8,7 +8,7 @@ export class Utils {
  * @param {Number} [start=0] - The start of the range.
  * @param {Number} end - The end of the range.
  */
-    private inRange(num: number, start = 0, end?: number): boolean {
+    private inRange(num: number, start: number = 0, end?: number): boolean {
         if (!end) {
             end = start;
             start = 0;
@@ -44,12 +44,6 @@ export class Utils {
         };
     }
 
-    /**
-     * Checks if a is less than b.
-     * @param {*} a
-     * @param {*} b
-     */
-    public lessThan = (a: number, b: number): boolean => a < b;
     private getMatrixHeight = (matrix: number[][]) => matrix.length;
     private getMatrixWidth = (matrix: number[][]) => matrix[0].length;
     /**
@@ -83,6 +77,13 @@ export class Utils {
 
         return newMatrix;
     }
+
+    public moduleOf(x: number, m: number) {
+        return (x % m + m) % m;
+    }
+
+    /** Reverse a matrix*/
+    public mirror = (matrix: number[][]) => matrix.map(row => row.reverse());
 }
 
 export const utils = new Utils();
