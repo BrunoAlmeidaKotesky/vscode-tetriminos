@@ -89,7 +89,7 @@ export class BoardController {
    * @returns {Boolean} True if there is nothing (0) in that spot, false if it is occupied
    */
   public notOccupied(x: number, y: number, board: number[][]): boolean {
-    return board[y] && board[y][x] === 0;
+    return y < 0 || (board[y] && board[y][x] === 0);
   }
 
   public calculateMovement(currentTime: number, [lastLeftMove, lastRightMove, lastDownMove]: MovementCalculationTuple): MovementCalculationTupleReturn {
