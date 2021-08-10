@@ -90,7 +90,6 @@
     }
     
     function animate(currentTime: number) {
-        if (currentTime - timeSincePieceLastFell < 1000 / 60) return;
         handlePlayerMovement(currentTime);
         detectCollisionFrame();
         animationID = requestAnimationFrame(animate);

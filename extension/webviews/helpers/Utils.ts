@@ -61,7 +61,7 @@ export class Utils {
         offsetX = 0,
         offsetY = 0,
         overwrite = true
-    ) {
+    ): Matrix {
         const lastXIndex = this.getMatrixWidth(sourceMatrix) + offsetX - 1;
         const lastYIndex = this.getMatrixHeight(sourceMatrix) + offsetY - 1;
 
@@ -84,7 +84,7 @@ export class Utils {
     }
 
     /** Reverse a matrix*/
-    public mirror = (matrix: Matrix) => matrix.map(row => row.reverse());
+    public mirror = (matrix: Matrix): Matrix => matrix.map(row => row.reverse());
 }
 
 export const utils = new Utils();
