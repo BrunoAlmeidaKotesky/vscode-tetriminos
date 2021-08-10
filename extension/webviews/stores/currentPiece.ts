@@ -52,7 +52,8 @@ function createCurrentPiece(initialPiece: IPieceInformation | null) {
                     const filteredKick = Object.keys(kicks).filter(kick => kick.includes(newPiece.name)) as unknown as TileKeys;
                     const pieceKicks = kicks[filteredKick];
                     // 4b. Grab the tests for the current start rotation and direction
-                    const tests = pieceKicks.filter(k => k?.rotation === rotation && k?.direction === direction)[0].tests;
+                    const actualKick = pieceKicks.filter(k => k?.rotation === rotation && k?.direction === direction);
+                    const tests = actualKick[0]?.tests ?? [];
                     // 4c. Store reference to current state
                     let validRotation = false;
                     // 4d. Run thru the tests - return the new piece adjusted for kick when first non-collision position found

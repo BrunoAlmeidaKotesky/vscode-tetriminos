@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BLOCK_SIZE, COLS } from "../helpers/constants";
 import { utils } from "../helpers/Utils";
 import type { Matrix } from "../types";
