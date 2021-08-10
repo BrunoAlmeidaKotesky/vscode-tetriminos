@@ -26,7 +26,7 @@ function createCurrentPiece(initialPiece: IPieceInformation | null) {
         movePieceRight: (board: Matrix) => {
             update(prevPiece => moveAndCheck(prevPiece as IPieceInformation, board, 1));
         },
-        movePieceDown(board: Matrix) {
+        movePieceDown(board?: Matrix) {
             update(prevPiece => {
                 const newPiece = klona(prevPiece);//{...prevPiece as IPieceInformation};
                 newPiece.y += 1;

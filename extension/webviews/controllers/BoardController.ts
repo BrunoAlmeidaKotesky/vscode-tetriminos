@@ -2,11 +2,18 @@ import { klona } from "klona";
 import { COLS, PLAYER_DOWN_RATE, PLAYER_SIDEWAYS_RATE, ROWS } from "../helpers/constants";
 import { utils } from "../helpers/Utils";
 import type { BoardStore } from "../stores/board";
+import type { CurrentPieceStore } from "../stores/currentPiece";
 import type { Matrix } from "../types";
 import type { IPieceInformation } from "./PieceController";
 
 export type MovementCalculationTupleReturn = [boolean, boolean, boolean, number];
 export type MovementCalculationTuple = [number, number, number];
+interface IBoardFalling {
+  deltaTime: number; 
+  timeSincePieceLastFell: number; 
+  fallRate: number; 
+  currentPiece: CurrentPieceStore;
+}
 
 export class BoardController {
 
@@ -118,6 +125,43 @@ export class BoardController {
     previousPositionPiece.y -= 1;
     board.mergePiecesIntoBoard(previousPositionPiece);
   }
+
+  public handleAutomatedFalling(fallingOptions: IBoardFalling) {
+    let {timeSincePieceLastFell, fallRate, currentPiece, deltaTime} = fallingOptions;
+    timeSincePieceLastFell += deltaTime;
+
+    const shouldPieceFall = timeSincePieceLastFell > Math.ceil(1000 / fallRate);
+
+    if (shouldPieceFall) {
+      timeSincePieceLastFell = 0;
+      currentPiece.movePieceDown();
+    }
+    return timeSincePieceLastFell;
+  }
+
+  public getFilledRows(matrix: Matrix) {
+    return matrix.reduce((filledRows, row, rowIndex) => {
+      // check that every element in the row is a filled block
+      if (row.every(i =>  i > 0)) {
+        filledRows.push(rowIndex);
+      }
+      return filledRows;
+    }, []);
+  }
+  
+  public removeRow(matrix: Matrix, rowIndex: number) {
+    const klone = klona(matrix);
+    klone.splice(rowIndex, 1);
+    return klone;
+  }
+  
+  public removeRowAndShiftDown(matrix: Matrix, rowIndex: number) {
+    const w = utils.getMatrixWidth(matrix);
+    const emptyRowMatrix = [BoardController.createEmptyArray(w)];
+    const newBoard = emptyRowMatrix.concat(this.removeRow(matrix, rowIndex));
+    return newBoard;
+  }
+  
 }
 
 const boardController = new BoardController();

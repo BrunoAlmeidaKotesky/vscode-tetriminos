@@ -5,6 +5,8 @@
     import { pieceController } from "../controllers/PieceController";
     import board from "../stores/board";
     import currentPiece from "../stores/currentPiece";
+    import lines from "../stores/lineStore";
+    import { fallRate } from '../stores/fallRateStore';
     import boardController from "../controllers/BoardController";
     // components
     import Statistics from "./Statistics.svelte";
@@ -25,6 +27,7 @@
     let lastDownMove: number = 0;
     let timeSincePieceLastFell: number = 0;
     let lastRotate: number = 0;
+    let lastFrameTime: number = 0;
 
     function handlePlayerMovement(currentTime: number) {
         const [
@@ -76,26 +79,45 @@
 
     }
 
-    function detectCollisionFrame() {
+    function clearCompletedLines() {
+        const filledRows = boardController.getFilledRows($board);
+        const numberOfClearedLines = filledRows ? filledRows.length : 0;
+
+        if (numberOfClearedLines > 0) {
+            // TODO: update score
+            lines.setLines($lines + numberOfClearedLines);
+            board.clearCompletedLines();
+        }
+    }
+
+    function animate(currentTime: number) {
+        let deltaTime = currentTime - lastFrameTime
+        lastFrameTime = currentTime;
+        
+        handlePlayerMovement(currentTime);
+        timeSincePieceLastFell = boardController.handleAutomatedFalling({
+            deltaTime, 
+            timeSincePieceLastFell, 
+            currentPiece, 
+            fallRate: $fallRate
+        });
         if (boardController.detectMatrixCollision($currentPiece, $board)) {
             boardController.mergeCurrentPieceIntoBoard($currentPiece, board);
+            clearCompletedLines();
             const randomPiece = pieceController.getRandomPiece();
-            console.log(randomPiece);
             currentPiece.setCurrentPiece(pieceController.centerPiece(randomPiece));
 
             // If there is still a collision right after a new piece is spawned, the game ends.
             if (boardController.detectMatrixCollision($currentPiece, $board))
                 return;
         }
-    }
-    
-    function animate(currentTime: number) {
-        handlePlayerMovement(currentTime);
-        detectCollisionFrame();
         animationID = requestAnimationFrame(animate);
     }
 
     function resetGame() {
+        timeSincePieceLastFell = 0;
+        lastFrameTime = 0;
+        board.resetBoard();
         const piece = pieceController.centerPiece(pieceController.getRandomPiece());
         currentPiece.setCurrentPiece(piece);
     }

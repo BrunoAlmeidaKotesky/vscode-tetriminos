@@ -1,5 +1,5 @@
 import {writable} from 'svelte/store';
-import {BoardController} from '../controllers/BoardController';
+import boardController, {BoardController} from '../controllers/BoardController';
 import type { IPieceInformation } from '../controllers/PieceController';
 import { COLS, ROWS } from '../helpers/constants';
 import { utils } from '../helpers/Utils';
@@ -19,6 +19,16 @@ function createBoard(initialBoard: Matrix) {
         const { matrix: pieceMatrix, x, y } = piece;
         const mergedBoard = utils.combineMatrices(prevBoard, pieceMatrix, x, y, false);
         return mergedBoard;
+      });
+    },
+    clearCompletedLines() {
+      update(prevBoard => {
+        const filledRows = boardController.getFilledRows(prevBoard);
+
+        return filledRows.reduce(
+          (board, rowIndex) => boardController.removeRowAndShiftDown(board, rowIndex),
+          prevBoard
+        );
       });
     }
   };

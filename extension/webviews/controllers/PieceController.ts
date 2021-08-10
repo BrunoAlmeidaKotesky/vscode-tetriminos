@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { BLOCK_SIZE, COLS } from "../helpers/constants";
-import { utils } from "../helpers/Utils";
 import type { Matrix } from "../types";
 
 export enum PieceColors {
@@ -238,16 +237,6 @@ export class PieceController {
         piece.y = piece.name === 'I' ? -1 : 0;
         return piece;
     }
-
-    public rotatePiece(clockwise: boolean, shouldRotate: boolean, tiles: number[]) { 
-        const oldRotationindex = this.rotationIndex;
-        this.rotationIndex += clockwise ? 1 : -1;
-        this.rotationIndex = utils.moduleOf(this.rotationIndex, 4);
-        for(let i = 0; i < tiles.length; i++) {
-            tiles[i]
-        }
-    }
-
 }
 
 const pieceController = new PieceController();

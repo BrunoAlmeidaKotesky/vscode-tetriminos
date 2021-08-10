@@ -45,8 +45,8 @@ export class Utils {
         };
     }
 
-    private getMatrixHeight = (matrix: Matrix) => matrix.length;
-    private getMatrixWidth = (matrix: Matrix) => matrix[0].length;
+    public getMatrixHeight = (matrix: Matrix) => matrix.length;
+    public getMatrixWidth = (matrix: Matrix) => matrix[0].length;
     /**
      * Combines two matrixes (a board and a piece) and returns the new matrix
      * @param {Array} destinationMatrix The board matrix
