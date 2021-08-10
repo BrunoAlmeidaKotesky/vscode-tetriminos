@@ -1,9 +1,377 @@
 import { BoardController } from "./BoardController";
 import { utils } from '../helpers/Utils';
+import type { Matrix } from "../types";
+
+interface IKickTests {
+    dx: number;
+    dy: number;
+}
+
+interface IKickInformation {
+    rotation: number;
+    direction: number;
+    tests: IKickTests[];
+}
+
+interface ITileRotationKick {
+    JLSTZ: IKickInformation[];
+    I: IKickInformation[];
+}
+
+export type TileKeys = keyof ITileRotationKick;
+
 
 export class TileController {
 
-    private flipMatrix(matrix: number[][]): number[][] {
+    public readonly tileKicks: ITileRotationKick = {
+        'JLSTZ': [
+          {
+            rotation: 0,
+            direction: -1,
+            tests:[
+              {
+                dx: 0, 
+                dy: 0
+              },
+              { 
+                dx:1,
+                dy:0
+              },
+              { 
+                dx:1,
+                dy:-1
+              },
+              { 
+                dx:0,
+                dy:2
+              },
+              { 
+                dx:1,
+                dy:2
+              },
+            ]
+          },
+          {
+            rotation: 0,
+            direction: 1,
+            tests:[
+              {
+                dx:0, dy:0
+              },
+              { 
+                dx:-1, dy:0
+              },
+              { 
+                dx:-1, dy:-1
+              },
+              { 
+                dx:0, dy:2
+              },
+              { 
+                dx:-1, dy:2
+              },
+            ]
+          },
+          {
+            rotation: 1,
+            direction: -1,
+            tests:[
+              {
+                dx:0, dy:0,
+              },
+              { 
+                dx:1, dy:0,
+              },
+              { 
+                dx:1, dy:1,
+              },
+              { 
+                dx:0, dy:-2,
+              },
+              { 
+                dx:1, dy:-2,
+              },
+            ]
+          },
+          {
+            rotation: 1,
+            direction: 1,
+            tests:[
+              {
+                dx:0, dy:0,
+              },
+              { 
+                dx:1, dy:0,
+              },
+              { 
+                dx:1, dy:1,
+              },
+              { 
+                dx:0, dy:-2,
+              },
+              { 
+                dx:1, dy:-2,
+              },
+            ]
+          },
+          {
+            rotation: 2,
+            direction: -1,
+            tests:[
+              {
+                dx:0, dy: 0,
+              },
+              { 
+                dx:-1, dy: 0,
+              },
+              { 
+                dx:-1, dy: -1,
+              },
+              { 
+                dx:0 , dy:2,
+              },
+              { 
+                dx:-1 , dy:2,
+              },
+            ]
+          },
+          {
+            rotation: 2,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy:0,
+              },
+              { 
+                dx: 1, dy:0,
+              },
+              { 
+                dx: 1, dy:-1,
+              },
+              { 
+                dx: 0, dy:2,
+              },
+              { 
+                dx: 1, dy:2,
+              },
+            ]
+          },
+          {
+            rotation: 3,
+            direction: -1,
+            tests:[
+              {
+                dx:0, dy: 0,
+              },
+              { 
+                dx:-1, dy: 0,
+              },
+              { 
+                dx:-1 , dy:1,
+              },
+              { 
+                dx:0, dy: -2,
+              },
+              { 
+                dx:-1, dy: -2,
+              },
+            ]
+          },
+          {
+            rotation: 3,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy:0,
+              },
+              { 
+                dx: -1, dy:0,
+              },
+              { 
+                dx: -1, dy:1,
+              },
+              { 
+                dx: 0, dy:-2,
+              },
+              { 
+                dx: -1, dy:-2,
+              },
+            ]
+          }
+        ],
+        'I': [
+          {
+            rotation: 0,
+            direction: -1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: -1, dy: 0,
+              },
+              { 
+                dx: 2, dy: 0,
+              },
+              { 
+                dx: -1, dy: -2,
+              },
+              { 
+                dx: 2, dy: 1,
+              },
+            ]
+          },
+          {
+            rotation: 0,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: -2, dy: 0,
+              },
+              { 
+                dx: 1, dy: 0,
+              },
+              { 
+                dx: -2, dy: 1,
+              },
+              { 
+                dx: 1, dy: -2,
+              },
+            ]
+          },
+          {
+            rotation: 1,
+            direction: -1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: 2, dy: 0,
+              },
+              { 
+                dx: -1, dy: 0,
+              },
+              { 
+                dx: 2, dy: -1,
+              },
+              { 
+                dx: -1, dy: 2,
+              },
+            ]
+          },
+          {
+            rotation: 1,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: -1, dy: 0,
+              },
+              { 
+                dx: 2, dy: 0,
+              },
+              { 
+                dx: -1, dy: -2,
+              },
+              { 
+                dx: 2, dy: 1,
+              },
+            ]
+          },
+          {
+            rotation: 2,
+            direction: -1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: 1, dy: 0,
+              },
+              { 
+                dx: -2, dy: 0,
+              },
+              { 
+                dx: 1, dy: 2,
+              },
+              { 
+                dx: -2, dy: -1,
+              },
+            ]
+          },
+          {
+            rotation: 2,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: 2, dy: 0,
+              },
+              { 
+                dx: -1, dy: 0,
+              },
+              { 
+                dx: 2, dy: -1,
+              },
+              { 
+                dx: -1, dy: 2,
+              },
+            ]
+          },
+          {
+            rotation: 3,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: -2, dy: 0,
+              },
+              { 
+                dx: 1, dy: 0,
+              },
+              { 
+                dx: -2, dy: 1,
+              },
+              { 
+                dx: 1, dy: -2,
+              },
+            ]
+          },
+          {
+            rotation: 3,
+            direction: 1,
+            tests:[
+              {
+                dx: 0, dy: 0,
+              },
+              { 
+                dx: 1, dy: 0,
+              },
+              { 
+                dx: -2, dy: 0,
+              },
+              { 
+                dx: 1, dy: 2,
+              },
+              { 
+                dx: -2, dy: -1,
+              },
+            ]
+          }
+        ]
+      }
+
+    private flipMatrix(matrix: Matrix): Matrix {
         const h = matrix.length;
         const w = matrix[0].length;
 
@@ -17,15 +385,15 @@ export class TileController {
         return newMatrix;
     }
 
-    private rotateRight = (matrix: number[][]) => {
+    private rotateRight = (matrix: Matrix) => {
         return utils.mirror(this.flipMatrix(matrix));
     }
 
-    private rotateLeft = (matrix: number[][]) => {
+    private rotateLeft = (matrix: Matrix) => {
         return this.flipMatrix(matrix).reverse();
     }
 
-    public rotate(matrix: number[][], direction: number): number[][] {
+    public rotate(matrix: Matrix, direction: number): Matrix {
         if (direction && direction <= 0) 
             return this.rotateLeft(matrix);
         return this.rotateRight(matrix);

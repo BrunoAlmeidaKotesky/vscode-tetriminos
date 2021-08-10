@@ -1,5 +1,6 @@
 import { BLOCK_SIZE, COLS } from "../helpers/constants";
 import { utils } from "../helpers/Utils";
+import type { Matrix } from "../types";
 
 export enum PieceColors {
     T = '#6B46C1',
@@ -16,7 +17,7 @@ export interface IPieceInformation {
     name: string;
     id: number;
     color: PieceColors;
-    matrix: number[][];
+    matrix: Matrix;
     x: number;
     y: number;
     rotation: number;
@@ -70,7 +71,7 @@ export class PieceController {
         ],
     };
 
-    private createPiece(name: string, color: PieceColors, matrix: number[][]): IPieceInformation {
+    private createPiece(name: string, color: PieceColors, matrix: Matrix): IPieceInformation {
         this.id++;
         // map non-zero values to the id of this piece
         matrix = matrix.map(row => row.map(value => (value === 0 ? 0 : this.id)));
@@ -161,7 +162,7 @@ export class PieceController {
      * @param {CanvasRenderingContext2D} ctx The canvas 2D ctx
      * @param {Array} boardMatrix The 2D array to use as our coordinates
      */
-     private drawBoard(ctx: CanvasRenderingContext2D, boardMatrix: number[][]): void {
+     private drawBoard(ctx: CanvasRenderingContext2D, boardMatrix: Matrix): void {
         this.drawMatrix(ctx, boardMatrix, 0, 0);
     }
 
@@ -182,7 +183,7 @@ export class PieceController {
      * @param {Array} board The 2D array to use as our coordinates
      * @param {Object} currentPiece The piece object to use
      */
-    public drawGame(ctx: CanvasRenderingContext2D, board: number[][], currentPiece: IPieceInformation) {
+    public drawGame(ctx: CanvasRenderingContext2D, board: Matrix, currentPiece: IPieceInformation) {
         this.clearCanvas(ctx, PieceColors.BACKGROUND);
         // if (config.showGuideLines && !isMidnightMode()) {
         // drawGuideLines(ctx)
@@ -198,7 +199,7 @@ export class PieceController {
      * @param {Number} xOffset
      * @param {Number} yOffset
      */
-    public drawMatrix(ctx: CanvasRenderingContext2D, matrix: number[][], xOffset: number, yOffset: number = 0) {
+    public drawMatrix(ctx: CanvasRenderingContext2D, matrix: Matrix, xOffset: number, yOffset: number = 0) {
         matrix.forEach((col, colIndex) => {
             col.forEach((row, rowIndex) => {
                 // eslint-disable-next-line curly

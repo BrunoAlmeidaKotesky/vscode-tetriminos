@@ -3,3 +3,5 @@ export type User = {
   name: string;
   githubId: string;
 };
+
+export type Matrix = number[][];

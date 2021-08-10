@@ -2,6 +2,7 @@ import { klona } from "klona";
 import { COLS, PLAYER_DOWN_RATE, PLAYER_SIDEWAYS_RATE, ROWS } from "../helpers/constants";
 import { utils } from "../helpers/Utils";
 import type { BoardStore } from "../stores/board";
+import type { Matrix } from "../types";
 import type { IPieceInformation } from "./PieceController";
 
 export type MovementCalculationTupleReturn = [boolean, boolean, boolean, number];
@@ -33,7 +34,7 @@ export class BoardController {
  * @param {Array} board The board matrix
  * @returns {Boolean} True if there is a collision, false if not
  */
-  public detectMatrixCollision( piece: IPieceInformation, board: number[][], xOffset: number = 0, yOffset: number = 0): boolean {
+  public detectMatrixCollision( piece: IPieceInformation, board: Matrix, xOffset: number = 0, yOffset: number = 0): boolean {
     const tempPiece = klona(piece);
     tempPiece.x += xOffset;
     tempPiece.y += yOffset;
@@ -49,7 +50,7 @@ export class BoardController {
    * @param {Array} board The board matrix
    * @returns {Boolean} True if the piece is within bounds of board, false if not
    */
-  public inBounds(piece: IPieceInformation, board: number[][]): boolean {
+  public inBounds(piece: IPieceInformation, board: Matrix): boolean {
     const { matrix } = piece;
     return matrix.every((row, dy) => {
       return row.every((value, dx) => {
@@ -88,7 +89,7 @@ export class BoardController {
    * @param {Array} board The 2 dimensional board array
    * @returns {Boolean} True if there is nothing (0) in that spot, false if it is occupied
    */
-  public notOccupied(x: number, y: number, board: number[][]): boolean {
+  public notOccupied(x: number, y: number, board: Matrix): boolean {
     return y < 0 || (board[y] && board[y][x] === 0);
   }
 

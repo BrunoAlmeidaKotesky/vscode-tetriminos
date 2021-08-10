@@ -1,3 +1,4 @@
+import type { Matrix } from "../types";
 
 export class Utils {
     /**
@@ -44,8 +45,8 @@ export class Utils {
         };
     }
 
-    private getMatrixHeight = (matrix: number[][]) => matrix.length;
-    private getMatrixWidth = (matrix: number[][]) => matrix[0].length;
+    private getMatrixHeight = (matrix: Matrix) => matrix.length;
+    private getMatrixWidth = (matrix: Matrix) => matrix[0].length;
     /**
      * Combines two matrixes (a board and a piece) and returns the new matrix
      * @param {Array} destinationMatrix The board matrix
@@ -55,8 +56,8 @@ export class Utils {
      * @param {boolean} [overwrite=true] Whether to overwrite the board matrix
      */
     public combineMatrices(
-        destinationMatrix: number[][],
-        sourceMatrix: number[][],
+        destinationMatrix: Matrix,
+        sourceMatrix: Matrix,
         offsetX = 0,
         offsetY = 0,
         overwrite = true
@@ -83,7 +84,7 @@ export class Utils {
     }
 
     /** Reverse a matrix*/
-    public mirror = (matrix: number[][]) => matrix.map(row => row.reverse());
+    public mirror = (matrix: Matrix) => matrix.map(row => row.reverse());
 }
 
 export const utils = new Utils();

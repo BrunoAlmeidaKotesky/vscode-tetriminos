@@ -3,10 +3,11 @@ import {BoardController} from '../controllers/BoardController';
 import type { IPieceInformation } from '../controllers/PieceController';
 import { COLS, ROWS } from '../helpers/constants';
 import { utils } from '../helpers/Utils';
+import type { Matrix } from '../types';
 
 const initialState = BoardController.createEmptyMatrix(COLS, ROWS);
 
-function createBoard(initialBoard: number[][]) {
+function createBoard(initialBoard: Matrix) {
   const { subscribe, set, update } = writable(initialBoard);
   return {
     subscribe,
