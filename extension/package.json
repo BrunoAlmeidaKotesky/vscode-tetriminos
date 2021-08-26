@@ -2,12 +2,14 @@
   "name": "tetriminos",
   "displayName": "Tetriminos",
   "description": "Keeping track of stuff",
-  "version": "0.0.1",
+  "publisher": "BrunoAlmeidaKotesky",
+  "repository": "https://github.com/BrunoAlmeidaKotesky/vscode-tetriminos",
+  "version": "0.0.5",
   "engines": {
     "vscode": "^1.52.0"
   },
   "categories": [
-    "Games"
+    "Other"
   ],
   "activationEvents": [
     "onCommand:tetriminos.play",
