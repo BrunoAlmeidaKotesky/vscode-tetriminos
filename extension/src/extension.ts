@@ -2,26 +2,20 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { MainPanel } from "./MainPanel";
-import { TokenManager } from "./TokenManager";
 
 export function activate(context: vscode.ExtensionContext) {
-  TokenManager.globalState = context.globalState;
-
   const item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
   );
-  item.text = "$(beaker) Add Todo";
+  item.text = "Play the game!";
   item.command = "tetriminos.play";
   item.show();
-
+  //Execute an command when clicking the sidebar item
   
   context.subscriptions.push(
     vscode.commands.registerCommand("tetriminos.play", () => {
-      vscode.window.showInformationMessage(
-        "token value is: " + TokenManager.getToken()
-      );
       MainPanel.createOrShow(context.extensionUri);
-    })
+    }),
   );
 }
 

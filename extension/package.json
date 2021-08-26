@@ -4,16 +4,17 @@
   "description": "Keeping track of stuff",
   "publisher": "BrunoAlmeidaKotesky",
   "repository": "https://github.com/BrunoAlmeidaKotesky/vscode-tetriminos",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.52.0"
   },
+  "icon": "media/logotetriminos.png",
   "categories": [
     "Other"
   ],
   "activationEvents": [
     "onCommand:tetriminos.play",
-    "onView:tetriminos.play"
+    "onView:tetriminos-sidebar-view"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -22,7 +23,7 @@
         {
           "id": "tetriminos-sidebar-view",
           "title": "tetriminos",
-          "icon": "media/checklist.svg"
+          "icon": "media/logotetriminos.png"
         }
       ]
     },
@@ -32,7 +33,7 @@
           "type": "webview",
           "id": "tetriminos-sidebar",
           "name": "tetriminos",
-          "icon": "media/checklist.svg",
+          "icon": "media/logotetriminos.png",
           "contextualTitle": "tetriminos"
         }
       ]
