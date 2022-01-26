@@ -6,8 +6,9 @@ import type { CurrentPieceStore } from "../stores/currentPiece";
 import type { Matrix } from "../types";
 import type { IPieceInformation } from "./PieceController";
 
-export type MovementCalculationTupleReturn = [boolean, boolean, boolean, number];
-export type MovementCalculationTuple = [number, number, number];
+export type MovementCalculationTupleReturn = [boolean, boolean, boolean, number, boolean];
+export type MovementCalculationTuple = [number, number, number, number];
+type CalculateFn = (currentTime: number, time: MovementCalculationTuple) => MovementCalculationTupleReturn;
 interface IBoardFalling {
   deltaTime: number; 
   timeSincePieceLastFell: number; 
@@ -100,7 +101,7 @@ export class BoardController {
     return y < 0 || (board[y] && board[y][x] === 0);
   }
 
-  public calculateMovement(currentTime: number, [lastLeftMove, lastRightMove, lastDownMove]: MovementCalculationTuple): MovementCalculationTupleReturn {
+  public calculateMovement: CalculateFn = (currentTime, [lastLeftMove, lastRightMove, lastDownMove, lastDropMove]) => {
     const playerSidewaysThreshold = Math.ceil(1000 / PLAYER_SIDEWAYS_RATE);
     const isLeftMovementAllowed =
       currentTime - lastLeftMove > playerSidewaysThreshold;
@@ -108,11 +109,13 @@ export class BoardController {
       currentTime - lastRightMove > playerSidewaysThreshold;
     const isDownMovementAllowed =
       currentTime - lastDownMove > Math.ceil(1000 / PLAYER_DOWN_RATE);
+    const isDropMovementAllowed = currentTime > lastDropMove;
     return [
       isLeftMovementAllowed,
       isRightMovementAllowed,
       isDownMovementAllowed,
-      playerSidewaysThreshold
+      playerSidewaysThreshold,
+      isDropMovementAllowed
     ];
   }
 

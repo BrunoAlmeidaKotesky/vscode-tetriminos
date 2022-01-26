@@ -1,12 +1,22 @@
 <script lang="ts">
     import { onMount, setContext } from "svelte";
-    import * as pressed from 'pressed';
-    import { COLS, ROWS, BLOCK_SIZE, TETRIS, KeyBoardController } from "../helpers/constants";
+    import * as pressed from "pressed";
+    import {
+        COLS,
+        ROWS,
+        BLOCK_SIZE,
+        TETRIS,
+        KeyBoardController,
+    } from "../helpers/constants";
     import { pieceController } from "../controllers/PieceController";
     import board from "../stores/board";
     import currentPiece from "../stores/currentPiece";
+    import { level } from "../stores/levelStore";
+    import nextPiece from "../stores/nextPieceStore";
     import lines from "../stores/lineStore";
-    import { fallRate } from '../stores/fallRateStore';
+    import scoreStore from "../stores/scoreStore";
+    import { fallRate } from "../stores/fallRateStore";
+    import statsScore from "../stores/statsStore";
     import boardController from "../controllers/BoardController";
     // components
     import Statistics from "./Statistics.svelte";
@@ -15,11 +25,22 @@
     import Score from "./Score.svelte";
     import NextPiece from "./NextPiece.svelte";
     import Level from "./Level.svelte";
+    import statsStore from "../stores/statsStore";
 
     const canvasWidth = COLS * BLOCK_SIZE;
     const canvasHeight = ROWS * BLOCK_SIZE;
-
-    setContext(TETRIS, { currentPiece, board });
+    const nextWidth = 4 * BLOCK_SIZE;
+    const nextHeight = 4 * BLOCK_SIZE;
+    statsScore.setBaseStats(pieceController?.tetriminos);
+    setContext(TETRIS, {
+        currentPiece,
+        board,
+        nextPiece,
+        level,
+        lines,
+        scoreStore,
+        statsScore,
+    });
 
     let animationID: number | null = null;
     let lastLeftMove: number = 0;
@@ -28,24 +49,35 @@
     let timeSincePieceLastFell: number = 0;
     let lastRotate: number = 0;
     let lastFrameTime: number = 0;
+    let lastDropMove: number = 0;
+    let softDropCount: number = 0;
 
     function handlePlayerMovement(currentTime: number) {
         const [
             isLeftMovementAllowed,
             isRightMovementAllowed,
             isDownMovementAllowed,
-            playerSidewaysThreshold
-        ] = boardController.calculateMovement(currentTime, [lastLeftMove, lastRightMove, lastDownMove]);
-        const isRotateMovementAllowed = currentTime - lastRotate > playerSidewaysThreshold;
+            playerSidewaysThreshold,
+            isDropMovementAllowed,
+        ] = boardController.calculateMovement(currentTime, [
+            lastLeftMove,
+            lastRightMove,
+            lastDownMove,
+            lastDropMove,
+        ]);
+        const isRotateMovementAllowed =
+            currentTime - lastRotate > playerSidewaysThreshold;
         if (pressed.some(KeyBoardController.DOWN)) {
             if (isDownMovementAllowed) {
                 lastDownMove = currentTime;
                 timeSincePieceLastFell = 0;
+                softDropCount += 1;
                 currentPiece.movePieceDown($board);
                 return;
             }
         } else {
             lastDownMove = 0;
+            softDropCount = 0;
         }
         if (pressed.some(KeyBoardController.LEFT)) {
             if (isLeftMovementAllowed) {
@@ -53,7 +85,7 @@
                 currentPiece?.movePieceLeft($board);
                 return;
             }
-        } else {            
+        } else {
             lastLeftMove = 0;
         }
 
@@ -66,50 +98,79 @@
         } else {
             lastRightMove = 0;
         }
-        
-        if(pressed.some(...KeyBoardController.ROTATE_LEFT, ...KeyBoardController.ROTATE_RIGHT)) {
-            if(isRotateMovementAllowed) {
+
+        if (
+            pressed.some(
+                ...KeyBoardController.ROTATE_LEFT,
+                ...KeyBoardController.ROTATE_RIGHT
+            )
+        ) {
+            if (isRotateMovementAllowed) {
                 lastRotate = currentTime;
-                if(pressed.some(...KeyBoardController.ROTATE_LEFT))
+                if (pressed.some(...KeyBoardController.ROTATE_LEFT))
                     currentPiece.rotateCurrentPiece($board, -1);
-                if(pressed.some(...KeyBoardController.ROTATE_RIGHT))
+                if (pressed.some(...KeyBoardController.ROTATE_RIGHT))
                     currentPiece.rotateCurrentPiece($board);
             }
         } else lastRotate = 0;
 
+        if (pressed.some(KeyBoardController.DROP)) {
+            if (isDropMovementAllowed) {
+                lastDropMove = currentTime + 500;
+                timeSincePieceLastFell = 0;
+                softDropCount += 1;
+                currentPiece.movePieceDown($board, true);
+                return;
+            }
+        } else {
+            lastDropMove = 0;
+            softDropCount = 0;
+        }
+        if (pressed.some(KeyBoardController.RESET)) {
+            resetGame();
+        }
     }
 
     function clearCompletedLines() {
         const filledRows = boardController.getFilledRows($board);
         const numberOfClearedLines = filledRows ? filledRows.length : 0;
-
         if (numberOfClearedLines > 0) {
-            // TODO: update score
             lines.setLines($lines + numberOfClearedLines);
             board.clearCompletedLines();
+            scoreStore.addClearedLineScore(numberOfClearedLines, $level);
         }
     }
 
     function animate(currentTime: number) {
-        let deltaTime = currentTime - lastFrameTime
+        let deltaTime = currentTime - lastFrameTime;
         lastFrameTime = currentTime;
-        
         handlePlayerMovement(currentTime);
         timeSincePieceLastFell = boardController.handleAutomatedFalling({
-            deltaTime, 
-            timeSincePieceLastFell, 
-            currentPiece, 
-            fallRate: $fallRate
+            deltaTime,
+            timeSincePieceLastFell,
+            currentPiece,
+            fallRate: $fallRate,
         });
         if (boardController.detectMatrixCollision($currentPiece, $board)) {
             boardController.mergeCurrentPieceIntoBoard($currentPiece, board);
+            scoreStore.addPieceScore(softDropCount);
+            softDropCount = 0;
             clearCompletedLines();
-            const randomPiece = pieceController.getRandomPiece();
-            currentPiece.setCurrentPiece(pieceController.centerPiece(randomPiece));
+            pieceController.makeNextPieceCurrent(
+                currentPiece,
+                $nextPiece,
+                statsStore,
+                $currentPiece?.id
+            );
+            pieceController.randomizeNextPiece(nextPiece);
 
             // If there is still a collision right after a new piece is spawned, the game ends.
-            if (boardController.detectMatrixCollision($currentPiece, $board))
+            if (boardController.detectMatrixCollision($currentPiece, $board)) {
+                console.log("Game over");
+                cancelAnimationFrame(animationID as number);
+                animationID = null;
                 return;
+            }
         }
         animationID = requestAnimationFrame(animate);
     }
@@ -118,8 +179,14 @@
         timeSincePieceLastFell = 0;
         lastFrameTime = 0;
         board.resetBoard();
-        const piece = pieceController.centerPiece(pieceController.getRandomPiece());
-        currentPiece.setCurrentPiece(piece);
+        pieceController.randomizeNextPiece(nextPiece);
+        pieceController.makeNextPieceCurrent(
+            currentPiece,
+            $nextPiece,
+            statsStore,
+            $currentPiece?.id
+        );
+        pieceController.randomizeNextPiece(nextPiece);
     }
 
     onMount(() => {
@@ -131,7 +198,7 @@
 
 <div class="game">
     <section class="stats">
-        <Statistics />
+        <Statistics stats={$statsStore}/>
     </section>
     <section>
         <Lines />
@@ -141,7 +208,7 @@
         <!-- SCORE -->
         <Score />
         <!-- NEXT PIECE -->
-        <NextPiece />
+        <NextPiece height={nextHeight} width={nextWidth} />
         <!-- LEVEL -->
         <Level />
     </section>

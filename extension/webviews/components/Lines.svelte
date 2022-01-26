@@ -1,7 +1,32 @@
-<script>
-    import Display from "./Display.svelte";
+<script lang="ts">
+    import { getContext } from "svelte";
+    import Display from "../components/Display.svelte";
+    import { TETRIS } from "../helpers/constants";
+    import type { IGameStore } from "../helpers/constants";
+
+    const { lines } = getContext<IGameStore>(TETRIS);
+    const zeroPaddingTotal = 3;
+
+    $: display = padLines($lines);
+
+    function padLines(currentLines: number): string {
+        const lines = currentLines.toString();
+        return lines.padStart(zeroPaddingTotal, "0");
+    }
 </script>
 
 <Display>
-    <span>Lines - 002</span>
+    <div>
+        <span>Lines {display}</span>
+    </div>
 </Display>
+
+<style>
+    div {
+        width: 100%;
+    }
+    span {
+        display: block;
+        text-align: right;
+    }
+</style>

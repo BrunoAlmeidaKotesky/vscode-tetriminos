@@ -11,3 +11,4 @@ function createLine(initialValue: number) {
 
 const initialState: number = 0;
 export default createLine(initialState);
+export type LineStore = ReturnType<typeof createLine>;

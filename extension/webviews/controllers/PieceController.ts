@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { klona } from "klona";
 import { BLOCK_SIZE, COLS } from "../helpers/constants";
+import { utils } from "../helpers/Utils";
+import type { CurrentPieceStore } from "../stores/currentPiece";
+import type { NextPieceStore } from "../stores/nextPieceStore";
+import type { StatsScore } from "../stores/statsStore";
 import type { Matrix } from "../types";
 
 export enum PieceColors {
@@ -28,6 +33,7 @@ export interface IPieceInformation {
 export class PieceController {
     private id: number = 0;
     private rotationIndex: number = 0;
+    private bag: IPieceInformation[] = [];
     public tetriminos: IPieceInformation[] = [];
     constructor() {
         this.tetriminos = this.getTetriminos();
@@ -118,12 +124,12 @@ export class PieceController {
      * @param {Number} w  The width of the block
      * @param {Number} h The height of the block
      */
-     private drawHighlight(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
+    private drawHighlight(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x + w, y);
-        ctx.lineTo(x + w - 2, y + h - 18);
-        ctx.lineTo(x + w - 18, y + 2);
+        ctx.lineTo(x + w - 2, y + 2);
+        ctx.lineTo(x + 2, y + 2);
         ctx.closePath();
         ctx.fillStyle = `rgba(255, 255, 255, .2)`;
         ctx.fill();
@@ -162,7 +168,7 @@ export class PieceController {
      * @param {CanvasRenderingContext2D} ctx The canvas 2D ctx
      * @param {Array} boardMatrix The 2D array to use as our coordinates
      */
-     private drawBoard(ctx: CanvasRenderingContext2D, boardMatrix: Matrix): void {
+    private drawBoard(ctx: CanvasRenderingContext2D, boardMatrix: Matrix): void {
         this.drawMatrix(ctx, boardMatrix, 0, 0);
     }
 
@@ -203,7 +209,7 @@ export class PieceController {
         matrix.forEach((col, colIndex) => {
             col.forEach((row, rowIndex) => {
                 // eslint-disable-next-line curly
-                if(row !== 0) 
+                if (row !== 0)
                     this.drawBlock(ctx, rowIndex + xOffset, colIndex + yOffset, this.getColorForID(row) as PieceColors);
             });
         });
@@ -221,25 +227,44 @@ export class PieceController {
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     }
-    
+
     public getRandomPiece() {
         const length = this.tetriminos.length;
         const idx = Math.floor(Math.random() * length);
         return this.tetriminos[idx];
     }
-    
+
     /**
      * Positions a piece in the center of the board.
      * @returns a copy of the input piece
      */
     public centerPiece(piece: IPieceInformation): IPieceInformation {
-        piece.x = Math.floor((COLS - piece.matrix[0].length) / 2);
-        piece.y = piece.name === 'I' ? -1 : 0;
-        return piece;
+        const clonePiece = klona(piece);
+        clonePiece.x = Math.floor((COLS - clonePiece.matrix[0].length) / 2);
+        clonePiece.y = piece.name === 'I' ? -1 : 0;
+        return clonePiece;
     }
+
+    public randomizeNextPiece(nextPiece: NextPieceStore) {
+        if(this.bag.length === 0) 
+            this.createPieceBag();
+        const pice = this.bag.pop();
+        nextPiece.setNextPiece(pice as IPieceInformation);
+    }
+
+    public makeNextPieceCurrent(currentPiece: CurrentPieceStore, $nextPiece: IPieceInformation, stats: StatsScore, currentPieceId: number) {
+        const spawnedPiece = this.centerPiece($nextPiece);
+        currentPiece.setCurrentPiece(spawnedPiece);
+        stats.updateStats(currentPieceId);
+    }
+
+    private createPieceBag() {
+        if(this.bag.length === 0)
+            this.bag = klona(this.tetriminos);
+        utils.shuffle(this.bag);
+    }
+    
 }
 
 const pieceController = new PieceController();
 export { pieceController };
-
-//Create a discord bot from scratch using typescript

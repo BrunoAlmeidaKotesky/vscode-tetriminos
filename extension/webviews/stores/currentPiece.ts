@@ -26,8 +26,16 @@ function createCurrentPiece(initialPiece: IPieceInformation | null) {
         movePieceRight: (board: Matrix) => {
             update(prevPiece => moveAndCheck(prevPiece as IPieceInformation, board, 1));
         },
-        movePieceDown(board?: Matrix) {
+        movePieceDown(board?: Matrix, dropAll: boolean = false) {
             update(prevPiece => {
+                //if dropAll is true, then we want to drop the piece as far as it can go
+                if (dropAll) {
+                    const newPiece = klona(prevPiece as IPieceInformation);
+                    while (!boardController.detectMatrixCollision(newPiece, board as Matrix)) {
+                        newPiece.y++;
+                    }
+                    return newPiece;
+                }
                 const newPiece = klona(prevPiece);//{...prevPiece as IPieceInformation};
                 newPiece.y += 1;
                 return newPiece;

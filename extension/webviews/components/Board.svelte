@@ -13,9 +13,8 @@
     const { currentPiece, board } = getContext(TETRIS);
     $: $currentPiece && drawCanvas();
     function drawCanvas() {
-        if(ctx) {
+        if(ctx) 
             pieceController.drawGame(ctx!, $board, $currentPiece);
-        }
     }
 
     onMount(() => {

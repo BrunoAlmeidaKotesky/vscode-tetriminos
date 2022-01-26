@@ -150,7 +150,6 @@ export class MainPanel {
   }
 
   private getNonce() {
-    console.log('here2');
     let text = "";
     const possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

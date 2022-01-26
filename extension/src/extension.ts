@@ -7,8 +7,9 @@ export function activate(context: vscode.ExtensionContext) {
   const item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right
   );
-  item.text = "Play the game!";
+  item.text = "Restart the game";
   item.command = "tetriminos.play";
+  item.name = "Restart the game";
   item.show();
   //Execute an command when clicking the sidebar item
   
