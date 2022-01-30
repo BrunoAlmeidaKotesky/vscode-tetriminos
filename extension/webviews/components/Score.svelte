@@ -1,9 +1,9 @@
 <script lang="ts">
     import { getContext } from "svelte";
-    import { TETRIS } from "../helpers/constants";
+    import { TETRIMINOS } from "../helpers/constants";
     import type {IGameStore} from "../helpers/constants";
     import Display from "../components/Display.svelte";
-    const { scoreStore } = getContext<IGameStore>(TETRIS);
+    const { scoreStore } = getContext<IGameStore>(TETRIMINOS);
     $: display = $scoreStore?.toString()?.padStart(6, "0");
 </script>
 

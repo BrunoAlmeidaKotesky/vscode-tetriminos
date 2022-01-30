@@ -5,6 +5,7 @@ import type { LevelStore } from "../stores/levelStore";
 import type { LineStore } from "../stores/lineStore";
 import type { ScoreStore } from "../stores/scoreStore";
 import type { StatsScore } from "../stores/statsStore";
+import type { HoldPieceStore } from "../stores/holdPieceStore";
 
 // BOARD
 export const COLS = 10; //width
@@ -30,8 +31,9 @@ export interface IGameStore {
     readonly lines: LineStore;
     readonly scoreStore: ScoreStore;
     readonly statsStore: StatsScore;
+    readonly holdPieceStore: HoldPieceStore;
 }
-export const TETRIS: Partial<IGameStore> = {};
+export const TETRIMINOS: Partial<IGameStore> = {};
 
 export enum KeyBoardController {
     DOWN = "down",

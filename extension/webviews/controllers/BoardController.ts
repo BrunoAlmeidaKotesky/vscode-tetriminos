@@ -3,6 +3,7 @@ import { COLS, PLAYER_DOWN_RATE, PLAYER_SIDEWAYS_RATE, ROWS } from "../helpers/c
 import { utils } from "../helpers/Utils";
 import type { BoardStore } from "../stores/board";
 import type { CurrentPieceStore } from "../stores/currentPiece";
+import type { HoldPieceStore } from "../stores/holdPieceStore";
 import type { Matrix } from "../types";
 import type { IPieceInformation } from "./PieceController";
 
@@ -119,7 +120,7 @@ export class BoardController {
     ];
   }
 
-  public mergeCurrentPieceIntoBoard(currentPiece: IPieceInformation, board: BoardStore) {
+  public mergeCurrentPieceIntoBoard(currentPiece: IPieceInformation, board: BoardStore, holdStore: HoldPieceStore) {
     // First moves the piece up one space.
     // This allows you to shift the piece around a bit and
     // only detects collisions at the end of the step
@@ -127,6 +128,7 @@ export class BoardController {
     const previousPositionPiece = klona(currentPiece); //{...$currentPiece};
     previousPositionPiece.y -= 1;
     board.mergePiecesIntoBoard(previousPositionPiece);
+    holdStore?.makeSwappable();
   }
 
   public handleAutomatedFalling(fallingOptions: IBoardFalling) {

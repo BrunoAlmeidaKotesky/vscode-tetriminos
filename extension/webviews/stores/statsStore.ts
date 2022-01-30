@@ -25,7 +25,7 @@ function createStats(initialStats: {id: number, count: number}[]) {
                     prevStats[index].count++
                 return prevStats;
             })
-        },
+        }
     }
 }
 

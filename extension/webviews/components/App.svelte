@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Tetris from "./Tetris.svelte";
+    import Game from "./Game.svelte";
 </script>
 
 <svelte:head>
@@ -39,5 +39,5 @@
 </svelte:head>
 
 <main>
-    <Tetris />
+    <Game />
 </main>

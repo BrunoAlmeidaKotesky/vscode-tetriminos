@@ -4,19 +4,19 @@
     import { TETRIMINOS } from "../helpers/constants";
     import Display from "../components/Display.svelte";
     import Piece from "../components/Piece.svelte";
-    const { nextPiece } = getContext<IGameStore>(TETRIMINOS);
+    const { holdPieceStore } = getContext<IGameStore>(TETRIMINOS);
     export let width: number;
     export let height: number;
 </script>
 
 <Display>
     <div>
-        <span>Next</span>
+        <span>Holding</span>
         <Piece
             {width}
             {height}
-            piece={$nextPiece}
-            xOffset={(4 - $nextPiece.matrix[0].length) / 2}
+            piece={$holdPieceStore}
+            xOffset={$holdPieceStore ? (4 - $holdPieceStore?.matrix[0]?.length) / 2 : 0}
             yOffset={1}
         />
     </div>

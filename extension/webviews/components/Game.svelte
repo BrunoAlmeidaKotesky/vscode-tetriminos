@@ -5,7 +5,7 @@
         COLS,
         ROWS,
         BLOCK_SIZE,
-        TETRIS,
+        TETRIMINOS,
         KeyBoardController,
     } from "../helpers/constants";
     import { pieceController } from "../controllers/PieceController";
@@ -26,13 +26,16 @@
     import NextPiece from "./NextPiece.svelte";
     import Level from "./Level.svelte";
     import statsStore from "../stores/statsStore";
+    import holdPieceStore from "../stores/holdPieceStore";
+    import HoldPiece from "./HoldPiece.svelte";
+import Info from "./Info.svelte";
 
     const canvasWidth = COLS * BLOCK_SIZE;
     const canvasHeight = ROWS * BLOCK_SIZE;
     const nextWidth = 4 * BLOCK_SIZE;
     const nextHeight = 4 * BLOCK_SIZE;
     statsScore.setBaseStats(pieceController?.tetriminos);
-    setContext(TETRIS, {
+    setContext(TETRIMINOS, {
         currentPiece,
         board,
         nextPiece,
@@ -40,6 +43,7 @@
         lines,
         scoreStore,
         statsScore,
+        holdPieceStore
     });
 
     let animationID: number | null = null;
@@ -51,6 +55,7 @@
     let lastFrameTime: number = 0;
     let lastDropMove: number = 0;
     let softDropCount: number = 0;
+    let timeSinceSwap: number = 0;
 
     function handlePlayerMovement(currentTime: number) {
         const [
@@ -65,8 +70,8 @@
             lastDownMove,
             lastDropMove,
         ]);
-        const isRotateMovementAllowed =
-            currentTime - lastRotate > playerSidewaysThreshold;
+        const isRotateMovementAllowed = currentTime - lastRotate > playerSidewaysThreshold;
+        const isSwapMovementAllowed = currentTime - timeSinceSwap > playerSidewaysThreshold;
         if (pressed.some(KeyBoardController.DOWN)) {
             if (isDownMovementAllowed) {
                 lastDownMove = currentTime;
@@ -126,9 +131,15 @@
             lastDropMove = 0;
             softDropCount = 0;
         }
-        if (pressed.some(KeyBoardController.RESET)) {
-            resetGame();
-        }
+        if (pressed.some(KeyBoardController.RESET))
+            resetGame(true);
+        if(pressed.some(KeyBoardController.HOLD)) {
+            if(isSwapMovementAllowed) {
+                timeSinceSwap = currentTime;
+                pieceController.swapHoldPiece({currentPiece, holdPieceStore, nextPiece, statsStore});
+                pressed.reset();
+            }
+        } else timeSinceSwap = 0;
     }
 
     function clearCompletedLines() {
@@ -151,8 +162,8 @@
             currentPiece,
             fallRate: $fallRate,
         });
-        if (boardController.detectMatrixCollision($currentPiece, $board)) {
-            boardController.mergeCurrentPieceIntoBoard($currentPiece, board);
+        if (boardController.detectMatrixCollision($currentPiece, $board, )) {
+            boardController.mergeCurrentPieceIntoBoard($currentPiece, board, holdPieceStore);
             scoreStore.addPieceScore(softDropCount);
             softDropCount = 0;
             clearCompletedLines();
@@ -166,19 +177,35 @@
 
             // If there is still a collision right after a new piece is spawned, the game ends.
             if (boardController.detectMatrixCollision($currentPiece, $board)) {
-                console.log("Game over");
                 cancelAnimationFrame(animationID as number);
                 animationID = null;
+                resetGame(true);
+                animationID = requestAnimationFrame(animate);
                 return;
             }
         }
         animationID = requestAnimationFrame(animate);
     }
 
-    function resetGame() {
+    function resetGame(currentGame = false) {
         timeSincePieceLastFell = 0;
         lastFrameTime = 0;
         board.resetBoard();
+        if(currentGame) {
+            animationID = null;
+            lastLeftMove = 0;
+            lastRightMove = 0;
+            lastDownMove = 0;
+            timeSincePieceLastFell = 0;
+            lastRotate = 0;
+            lastFrameTime = 0;
+            lastDropMove = 0;
+            softDropCount = 0;
+            timeSinceSwap = 0;
+            holdPieceStore.reset();
+            statsScore.setBaseStats(pieceController?.tetriminos);
+            scoreStore.reset();
+        }
         pieceController.randomizeNextPiece(nextPiece);
         pieceController.makeNextPieceCurrent(
             currentPiece,
@@ -207,10 +234,14 @@
     <section class="meta">
         <!-- SCORE -->
         <Score />
-        <!-- NEXT PIECE -->
+        <!-- NEXT/HOLD PIECE -->
         <NextPiece height={nextHeight} width={nextWidth} />
+        <HoldPiece height={nextHeight} width={nextWidth} />
         <!-- LEVEL -->
         <Level />
+    </section>
+    <section>
+        <Info/>
     </section>
 </div>
 <svelte:head>
@@ -218,7 +249,7 @@
         .game {
             max-width: 56rem;
             display: grid;
-            grid-template-columns: 220px auto 200px;
+            grid-template-columns: 220px auto 96px auto;
         }
         section {
             display: flex;
@@ -229,6 +260,14 @@
         }
         .meta {
             align-items: flex-start;
+        }
+        .infoGrid {
+            display: grid;
+            row-gap: 6px;
+        }
+        .infoTitle {
+            font-size: 1.2rem;
+            font-weight: bold;
         }
     </style>
 </svelte:head>

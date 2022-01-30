@@ -1,12 +1,12 @@
 <script lang="ts">
     import { getContext } from "svelte";
     import Display from "../components/Display.svelte";
-    import { TETRIS } from "../helpers/constants";
+    import { TETRIMINOS } from "../helpers/constants";
     import type { IGameStore } from "../helpers/constants";
 
     const zeroPaddingTotal = 2;
     const displayLength = 5;
-    const { level } = getContext<IGameStore>(TETRIS);
+    const { level } = getContext<IGameStore>(TETRIMINOS);
 
     $: display = padLevel($level);
 

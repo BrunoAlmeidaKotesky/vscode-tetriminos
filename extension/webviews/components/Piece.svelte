@@ -14,11 +14,10 @@ import type { Matrix } from "../types";
     let ref: HTMLCanvasElement;
     let ctx: CanvasRenderingContext2D;
 
-    $: piece, ctx, drawCanvas(piece.matrix);
+    $: piece, ctx, drawCanvas(piece?.matrix);
 
     function drawCanvas(matrix: Matrix) {
         if (ctx) {
-            const x = (4 - matrix[0].length) / 2;
             pieceController.clearCanvas(ctx, PieceColors.BACKGROUND);
             pieceController.drawMatrix(ctx, matrix, xOffset, yOffset);
         }

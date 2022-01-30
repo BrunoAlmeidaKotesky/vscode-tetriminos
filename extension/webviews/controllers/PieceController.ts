@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { klona } from "klona";
-import { BLOCK_SIZE, COLS } from "../helpers/constants";
+import { get } from "svelte/store";
+import { BLOCK_SIZE, COLS, IGameStore } from "../helpers/constants";
 import { utils } from "../helpers/Utils";
 import type { CurrentPieceStore } from "../stores/currentPiece";
+import type { HoldPieceStore } from "../stores/holdPieceStore";
 import type { NextPieceStore } from "../stores/nextPieceStore";
 import type { StatsScore } from "../stores/statsStore";
 import type { Matrix } from "../types";
@@ -262,6 +264,25 @@ export class PieceController {
         if(this.bag.length === 0)
             this.bag = klona(this.tetriminos);
         utils.shuffle(this.bag);
+    }
+
+    //Create an method that make the current piece the holding piece, and set the next to be the current
+    public swapHoldPiece(stores: Pick<IGameStore, 'currentPiece'|'holdPieceStore'|'nextPiece'|'statsStore'>) {
+        const {currentPiece: currentPieceStore, nextPiece: nextPieceStore, holdPieceStore, statsStore} = stores;
+        const currentPiece = get(currentPieceStore);
+        const nextPiece = get(nextPieceStore);
+        const holdingPiece = get(holdPieceStore);
+        
+        if(holdingPiece.id === -1) {
+            holdPieceStore.setHoldPiece({...currentPiece, canBeSwapped: false});
+            this.makeNextPieceCurrent(currentPieceStore, nextPiece, statsStore, currentPiece?.id);
+            this.randomizeNextPiece(nextPieceStore);
+        } else {
+            if(holdingPiece?.canBeSwapped) {
+                holdPieceStore.setHoldPiece({...currentPiece, canBeSwapped: false});
+                currentPieceStore.setCurrentPiece(holdingPiece);
+            }
+        }
     }
     
 }
