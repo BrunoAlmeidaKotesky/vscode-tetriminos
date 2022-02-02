@@ -280,7 +280,7 @@ export class PieceController {
         } else {
             if(holdingPiece?.canBeSwapped) {
                 holdPieceStore.setHoldPiece({...currentPiece, canBeSwapped: false});
-                currentPieceStore.setCurrentPiece(holdingPiece);
+                currentPieceStore.setCurrentPiece(this.centerPiece(holdingPiece));
             }
         }
     }

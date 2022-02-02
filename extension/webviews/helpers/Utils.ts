@@ -79,8 +79,8 @@ export class Utils {
         return newMatrix;
     }
 
-    public moduleOf(x: number, m: number) {
-        return (x % m + m) % m;
+    public moduleOf(num: number, module: number) {
+        return (num % module + module) % module;
     }
 
     /** Reverse a matrix*/

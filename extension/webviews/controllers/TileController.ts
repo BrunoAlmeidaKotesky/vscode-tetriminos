@@ -1,15 +1,15 @@
 import { BoardController } from "./BoardController";
 import { utils } from '../helpers/Utils';
 import type { Matrix } from "../types";
-
+import { RotationDirection, RotationStates } from "../helpers/constants";
 interface IKickTests {
   dx: number;
   dy: number;
 }
 
 interface IKickInformation {
-  rotation: number;
-  direction: number;
+  rotation: RotationStates;
+  direction: RotationDirection;
   tests: IKickTests[];
 }
 
@@ -26,8 +26,8 @@ export class TileController {
   public readonly tileKicks: ITileRotationKick = {
     'JLSTZ': [
       {
-        rotation: 0,
-        direction: -1,
+        direction: RotationDirection.LEFT,
+        rotation: RotationStates.SPAWN,
         tests: [
           {
             dx: 0,
@@ -53,7 +53,7 @@ export class TileController {
       },
       {
         rotation: 0,
-        direction: 1,
+        direction: RotationDirection.RIGHT,
         tests: [
           {
             dx: 0, dy: 0
@@ -74,7 +74,7 @@ export class TileController {
       },
       {
         rotation: 1,
-        direction: -1,
+        direction: RotationDirection.LEFT,
         tests: [
           {
             dx: 0, dy: 0,
@@ -95,7 +95,7 @@ export class TileController {
       },
       {
         rotation: 1,
-        direction: 1,
+        direction: RotationDirection.RIGHT,
         tests: [
           {
             dx: 0, dy: 0,
@@ -116,7 +116,7 @@ export class TileController {
       },
       {
         rotation: 2,
-        direction: -1,
+        direction: RotationDirection.LEFT,
         tests: [
           {
             dx: 0, dy: 0,
@@ -137,7 +137,7 @@ export class TileController {
       },
       {
         rotation: 2,
-        direction: 1,
+        direction: RotationDirection.RIGHT,
         tests: [
           {
             dx: 0, dy: 0,
@@ -158,7 +158,7 @@ export class TileController {
       },
       {
         rotation: 3,
-        direction: -1,
+        direction: RotationDirection.LEFT,
         tests: [
           {
             dx: 0, dy: 0,
@@ -179,7 +179,7 @@ export class TileController {
       },
       {
         rotation: 3,
-        direction: 1,
+        direction: RotationDirection.RIGHT,
         tests: [
           {
             dx: 0, dy: 0,
@@ -201,171 +201,91 @@ export class TileController {
     ],
     'I': [
       {
-        rotation: 0,
-        direction: -1,
+        rotation: RotationStates.SPAWN,
+        direction: RotationDirection.RIGHT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: -1, dy: 0,
-          },
-          {
-            dx: 2, dy: 0,
-          },
-          {
-            dx: -1, dy: -2,
-          },
-          {
-            dx: 2, dy: 1,
-          },
+          {dx: 0, dy: 0},
+          {dx: -2, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: -2, dy: -1},
+          {dx: 1, dy: 2},
         ]
       },
       {
-        rotation: 0,
-        direction: 1,
+        rotation: RotationStates.SPAWN,
+        direction: RotationDirection.LEFT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: -2, dy: 0,
-          },
-          {
-            dx: 1, dy: 0,
-          },
-          {
-            dx: -2, dy: 1,
-          },
-          {
-            dx: 1, dy: -2,
-          },
+          {dx: 0, dy: 0},
+          {dx: -1, dy: 0},
+          {dx: 2, dy: 0},
+          {dx: -1, dy: 2},
+          {dx: 2, dy: -1}
         ]
       },
       {
-        rotation: 1,
-        direction: -1,
+        rotation: RotationStates.FULL_ROTATION,
+        direction: RotationDirection.RIGHT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: 2, dy: 0,
-          },
-          {
-            dx: -1, dy: 0,
-          },
-          {
-            dx: 2, dy: -1,
-          },
-          {
-            dx: -1, dy: 2,
-          },
+          {dx: 0, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: -2, dy: 0},
+          {dx: 1, dy: -2},
+          {dx: -2, dy: 1}
         ]
       },
       {
-        rotation: 1,
-        direction: 1,
+        rotation: RotationStates.FULL_ROTATION,
+        direction: RotationDirection.LEFT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: -1, dy: 0,
-          },
-          {
-            dx: 2, dy: 0,
-          },
-          {
-            dx: -1, dy: -2,
-          },
-          {
-            dx: 2, dy: 1,
-          },
+          {dx: 0, dy: 0},
+          {dx: 2, dy: 0},
+          {dx: -1, dy: 0},
+          {dx: 2, dy: 1},
+          {dx: -1, dy: -2}
         ]
       },
       {
-        rotation: 2,
-        direction: -1,
+        rotation: RotationStates.R,
+        direction: RotationDirection.LEFT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: 1, dy: 0,
-          },
-          {
-            dx: -2, dy: 0,
-          },
-          {
-            dx: 1, dy: 2,
-          },
-          {
-            dx: -2, dy: -1,
-          },
+          {dx: 0, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: 1, dy: -1},
+          {dx: 0, dy: 2},
+          {dx: 1, dy: 2},
         ]
       },
       {
-        rotation: 2,
-        direction: 1,
+        rotation: RotationStates.R,
+        direction: RotationDirection.RIGHT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: 2, dy: 0,
-          },
-          {
-            dx: -1, dy: 0,
-          },
-          {
-            dx: 2, dy: -1,
-          },
-          {
-            dx: -1, dy: 2,
-          },
+          {dx: 0, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: 1, dy: -1},
+          {dx: 0, dy: 2},
+          {dx: 1, dy: 2},
         ]
       },
       {
-        rotation: 3,
-        direction: 1,
+        rotation: RotationStates.L, //Nao arrumei
+        direction: RotationDirection.LEFT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: -2, dy: 0,
-          },
-          {
-            dx: 1, dy: 0,
-          },
-          {
-            dx: -2, dy: 1,
-          },
-          {
-            dx: 1, dy: -2,
-          },
+          {dx: 0, dy: 0},
+          {dx: -2, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: -2, dy: -1},
+          {dx: 1, dy: 2},
         ]
       },
       {
-        rotation: 3,
-        direction: 1,
+        rotation: RotationStates.L, //Nao arrumei
+        direction: RotationDirection.RIGHT,
         tests: [
-          {
-            dx: 0, dy: 0,
-          },
-          {
-            dx: 1, dy: 0,
-          },
-          {
-            dx: -2, dy: 0,
-          },
-          {
-            dx: 1, dy: 2,
-          },
-          {
-            dx: -2, dy: -1,
-          },
+          {dx: 0, dy: 0},
+          {dx: 1, dy: 0},
+          {dx: -2, dy: 0},
+          {dx: 1, dy: -2},
+          {dx: -2, dy: 1},
         ]
       }
     ]
@@ -393,8 +313,8 @@ export class TileController {
     return this.flipMatrix(matrix).reverse();
   }
 
-  public rotate(matrix: Matrix, direction: number): Matrix {
-    if (direction && direction <= 0)
+  public rotate(matrix: Matrix, direction: RotationDirection): Matrix {
+    if (direction === RotationDirection.LEFT)
       return this.rotateLeft(matrix);
     return this.rotateRight(matrix);
   }

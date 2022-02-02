@@ -7,6 +7,7 @@
         BLOCK_SIZE,
         TETRIMINOS,
         KeyBoardController,
+RotationDirection,
     } from "../helpers/constants";
     import { pieceController } from "../controllers/PieceController";
     import board from "../stores/board";
@@ -28,7 +29,7 @@
     import statsStore from "../stores/statsStore";
     import holdPieceStore from "../stores/holdPieceStore";
     import HoldPiece from "./HoldPiece.svelte";
-import Info from "./Info.svelte";
+    import Info from "./Info.svelte";
 
     const canvasWidth = COLS * BLOCK_SIZE;
     const canvasHeight = ROWS * BLOCK_SIZE;
@@ -113,9 +114,9 @@ import Info from "./Info.svelte";
             if (isRotateMovementAllowed) {
                 lastRotate = currentTime;
                 if (pressed.some(...KeyBoardController.ROTATE_LEFT))
-                    currentPiece.rotateCurrentPiece($board, -1);
+                    currentPiece.rotateCurrentPiece($board, RotationDirection.LEFT);
                 if (pressed.some(...KeyBoardController.ROTATE_RIGHT))
-                    currentPiece.rotateCurrentPiece($board);
+                    currentPiece.rotateCurrentPiece($board, RotationDirection.RIGHT);
             }
         } else lastRotate = 0;
 
