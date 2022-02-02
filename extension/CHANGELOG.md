@@ -1,9 +1,6 @@
 # Change Log
 
-All notable changes to the "vstodo" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+### V1.1.0
+- Fixed the bug that when swapping a piece, sometimes it was not being centered correctly.
+- The SRS algorithm now works almost as expected, the only difference is the rotation for the I piece is not 100%.
+- Fixed the bug that pieces could not be rotated when on sidewalls.
