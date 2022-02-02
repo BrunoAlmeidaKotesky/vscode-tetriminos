@@ -47,7 +47,7 @@ export class BoardController {
     const tempPiece = klona(piece);
     tempPiece.x += xOffset;
     tempPiece.y += yOffset;
-    if (this.inBounds(piece, board))
+    if (this.inBounds(tempPiece, board))
       return false;
     return true;
   }
@@ -127,6 +127,7 @@ export class BoardController {
     // instead of at the beginning.
     const previousPositionPiece = klona(currentPiece); //{...$currentPiece};
     previousPositionPiece.y -= 1;
+    //wait 200ms for the piece to merge
     board.mergePiecesIntoBoard(previousPositionPiece);
     holdStore?.makeSwappable();
   }

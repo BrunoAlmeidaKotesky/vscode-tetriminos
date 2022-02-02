@@ -47,3 +47,19 @@ export enum KeyBoardController {
     DROP = "SPACE",
     RESET = "R"
 }
+
+export enum RotationDirection {
+    LEFT = 0,
+    RIGHT = 1
+}
+
+export enum RotationStates {
+    /**Spawn state */
+    SPAWN = 0,
+    /**State resulting from a clockwise rotation ("right") from spawn */
+    R = 1,
+    /**State resulting from a counter-clockwise rotation ("left") from spawn */
+    L = 2,
+    /**State resulting from 2 successive rotations in either direction from spawn. */
+    FULL_ROTATION = 3
+}

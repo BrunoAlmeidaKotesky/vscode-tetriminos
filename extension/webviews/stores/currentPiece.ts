@@ -1,9 +1,11 @@
 import { writable } from 'svelte/store';
 import { klona } from 'klona';
+import type { RotationDirection } from '../helpers/constants';
 import type { IPieceInformation } from '../controllers/PieceController';
 import boardController from '../controllers/BoardController';
 import tilesController, { TileKeys } from '../controllers/TileController';
 import type { Matrix } from '../types';
+import { utils } from '../helpers/Utils';
 
 const initialState = null;
 
@@ -41,7 +43,7 @@ function createCurrentPiece(initialPiece: IPieceInformation | null) {
                 return newPiece;
             });
         },
-        rotateCurrentPiece(board: Matrix, direction = 1) {
+        rotateCurrentPiece(board: Matrix, direction: RotationDirection) {
             update(prevPiece => {
                 // 0. if this is the "O" piece we can just return it
                 if (prevPiece.name === 'O')
@@ -50,7 +52,7 @@ function createCurrentPiece(initialPiece: IPieceInformation | null) {
                 let newPiece = klona(prevPiece);
                 // 2. store a reference to the starting rotation position (0-3) and advance rotation position
                 const rotation = newPiece.rotation;
-                newPiece.rotation = (prevPiece.rotation + 1) % 4;
+                newPiece.rotation = utils.moduleOf(prevPiece.rotation, 4);
                 // 3. rotate the cloned piece's matrix
                 newPiece.matrix = tilesController.rotate(newPiece.matrix, direction);
                 // 4. If the rotation results in a collision
