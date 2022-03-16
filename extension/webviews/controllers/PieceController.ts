@@ -4,7 +4,6 @@ import { get } from "svelte/store";
 import { BLOCK_SIZE, COLS, IGameStore } from "../helpers/constants";
 import { utils } from "../helpers/Utils";
 import type { CurrentPieceStore } from "../stores/currentPiece";
-import type { HoldPieceStore } from "../stores/holdPieceStore";
 import type { NextPieceStore } from "../stores/nextPieceStore";
 import type { StatsScore } from "../stores/statsStore";
 import type { Matrix } from "../types";
@@ -17,7 +16,8 @@ export enum PieceColors {
     S = '#68D391',
     L = '#2B6CB0',
     I = '#4FD1C5',
-    BACKGROUND = '#000000'
+    BACKGROUND = '#000000',
+    GHOST_PIECE = 'rgb(170 170 170 / 22%)'
 }
 
 export interface IPieceInformation {
@@ -34,7 +34,6 @@ export interface IPieceInformation {
 
 export class PieceController {
     private id: number = 0;
-    private rotationIndex: number = 0;
     private bag: IPieceInformation[] = [];
     public tetriminos: IPieceInformation[] = [];
     constructor() {
@@ -184,6 +183,10 @@ export class PieceController {
         this.drawMatrix(ctx, piece.matrix, piece.x, piece.y);
     }
 
+    private drawGhostPiece(ctx: CanvasRenderingContext2D, ghostPiece: IPieceInformation) {
+        this.drawMatrix(ctx, ghostPiece.matrix, ghostPiece.x, ghostPiece.y, ghostPiece.color);
+    }
+
     /**
      * Clears then draws a board and current piece to the canvas
      *
@@ -191,13 +194,11 @@ export class PieceController {
      * @param {Array} board The 2D array to use as our coordinates
      * @param {Object} currentPiece The piece object to use
      */
-    public drawGame(ctx: CanvasRenderingContext2D, board: Matrix, currentPiece: IPieceInformation) {
+    public drawGame(ctx: CanvasRenderingContext2D, board: Matrix, currentPiece: IPieceInformation, ghostPiece: IPieceInformation) {
         this.clearCanvas(ctx, PieceColors.BACKGROUND);
-        // if (config.showGuideLines && !isMidnightMode()) {
-        // drawGuideLines(ctx)
-        // }
         this.drawBoard(ctx, board);
         this.drawPiece(ctx, currentPiece);
+        this.drawGhostPiece(ctx, ghostPiece);
     }
 
     /**
@@ -207,12 +208,12 @@ export class PieceController {
      * @param {Number} xOffset
      * @param {Number} yOffset
      */
-    public drawMatrix(ctx: CanvasRenderingContext2D, matrix: Matrix, xOffset: number, yOffset: number = 0) {
+    public drawMatrix(ctx: CanvasRenderingContext2D, matrix: Matrix, xOffset: number, yOffset: number = 0, customColor?: PieceColors) {
         matrix.forEach((col, colIndex) => {
             col.forEach((row, rowIndex) => {
                 // eslint-disable-next-line curly
                 if (row !== 0)
-                    this.drawBlock(ctx, rowIndex + xOffset, colIndex + yOffset, this.getColorForID(row) as PieceColors);
+                    this.drawBlock(ctx, rowIndex + xOffset, colIndex + yOffset, customColor ? customColor : this.getColorForID(row) as PieceColors);
             });
         });
     }

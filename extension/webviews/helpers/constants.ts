@@ -15,10 +15,10 @@ export const PLAYER_DOWN_RATE = 20;
 // Falling rate should be expressed in steps per second.
 export const INITIAL_FALL_RATE = 1;
 // This number is added to the fall rate on each new level
-export const FALL_RATE_LEVEL_MODIFIER = 0.5;
+export const FALL_RATE_LEVEL_MODIFIER = 0.8;
 // Levels
 export const START_LEVEL = 0;
-export const NEW_LEVEL_EVERY = 10;
+export const NEW_LEVEL_EVERY = 5;
 // PIECE
 export const BLOCK_SIZE = 20;
 export const LINE_POINTS = [40, 100, 300, 1200, 2400];

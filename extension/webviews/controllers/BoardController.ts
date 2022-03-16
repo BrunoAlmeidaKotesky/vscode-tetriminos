@@ -5,7 +5,7 @@ import type { BoardStore } from "../stores/board";
 import type { CurrentPieceStore } from "../stores/currentPiece";
 import type { HoldPieceStore } from "../stores/holdPieceStore";
 import type { Matrix } from "../types";
-import type { IPieceInformation } from "./PieceController";
+import { IPieceInformation, PieceColors } from "./PieceController";
 
 export type MovementCalculationTupleReturn = [boolean, boolean, boolean, number, boolean];
 export type MovementCalculationTuple = [number, number, number, number];
@@ -167,7 +167,16 @@ export class BoardController {
     const newBoard = emptyRowMatrix.concat(this.removeRow(matrix, rowIndex));
     return newBoard;
   }
-  
+
+  public calculateGhostPosition(matrix: Matrix, currentPiece: IPieceInformation): IPieceInformation  {
+    let ghostPiece = klona(currentPiece);
+    ghostPiece.color = PieceColors.GHOST_PIECE;
+    while (!this.detectMatrixCollision(ghostPiece, matrix)) {
+      ghostPiece.y++;
+    }
+    ghostPiece.y = ghostPiece.y - 1;
+    return ghostPiece;
+  }
 }
 
 const boardController = new BoardController();

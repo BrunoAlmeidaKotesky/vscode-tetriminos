@@ -79,6 +79,7 @@ RotationDirection,
                 timeSincePieceLastFell = 0;
                 softDropCount += 1;
                 currentPiece.movePieceDown($board);
+                boardController.calculateGhostPosition($board, $currentPiece);
                 return;
             }
         } else {
@@ -203,6 +204,7 @@ RotationDirection,
             lastDropMove = 0;
             softDropCount = 0;
             timeSinceSwap = 0;
+            lines.resetLines();
             holdPieceStore.reset();
             statsScore.setBaseStats(pieceController?.tetriminos);
             scoreStore.reset();
