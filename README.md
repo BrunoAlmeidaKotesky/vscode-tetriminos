@@ -1,3 +1,5 @@
+**[Download Extension](https://marketplace.visualstudio.com/items?itemName=BrunoAlmeidaKotesky.tetriminos)**
+
 **New version 1.2.0 Available!**
 
 ## Features
