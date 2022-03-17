@@ -1,4 +1,7 @@
 
+### 1.2.1: 
+- Using imgur to host read-me images.
+
 ### 1.2.0
 The focus of this release was on increasing the game difficulty, fixing bugs and *FINALLY* implementing a **ghost piece preview**.
 

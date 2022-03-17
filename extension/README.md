@@ -5,10 +5,10 @@ Play a game similar to Tetris inside VSCode.
 
 You can play a falling block game like, very similiar to TETRIS, with many of the same features from the official game.
 
-### Most recent version: 1.2.0
+### Most recent version: 1.2.1
 *Please read the [changelog](https://github.com/BrunoAlmeidaKotesky/vscode-tetriminos/blob/main/extension/CHANGELOG.md) for the other versions.*
 
-![Ghost Piece](img/ghost-piece.png)
+![Ghost Piece](https://i.imgur.com/2h6QkBs.png)
 
 The focus of this release was on increasing the game difficulty, fixing bugs and *FINALLY* implementing a **ghost piece preview**.
 
